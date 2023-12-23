@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+
+    ~TreeNode() {
+        // Рекурсивно освобождаем память для левого и правого поддеревьев
+        if (left != nullptr) {
+            delete left;
+        }
+        if (right != nullptr) {
+            delete right;
+        }
+    }
+};
+
+class Solution {
+public:
+    int maxPathSum(TreeNode* root) {
+        int maxSum = std::numeric_limits<int>::min();
+        maxPathSumRecursive(root, maxSum);
+        return maxSum;
+    }
+
+private:
+    int maxPathSumRecursive(TreeNode* root, int& maxSum) {
+        if (root == nullptr) {
+            return 0;
+        }
+
+        // Рассмотрим максимальные суммы в левом и правом поддеревьях
+        int leftMax = std::max(0, maxPathSumRecursive(root->left, maxSum));
+        int rightMax = std::max(0, maxPathSumRecursive(root->right, maxSum));
+
+        // Обновим максимальную сумму
+        maxSum = std::max(maxSum, root->val + leftMax + rightMax);
+
+        // Вернем максимальную сумму для продолжения пути вверх по дереву
+        return root->val + std::max(leftMax, rightMax);
+    }
+};
+
+int main() {
+    // Пример использования
+    TreeNode* root = new TreeNode(10);
+    root->left = new TreeNode(2);
+    root->right = new TreeNode(10);
+    root->left->left = new TreeNode(20);
+    root->left->right = new TreeNode(1);
+    root->right->right = new TreeNode(-25);
+    root->right->right->left = new TreeNode(3);
+    root->right->right->right = new TreeNode(4);
+
+    Solution solution;
+    int result = solution.maxPathSum(root);
+
+    std::cout << "Максимальная сумма путей в бинарном дереве: " << result << std::endl;
+
+    // Освобождение памяти
+    delete root;
+
+    return 0;
+}
