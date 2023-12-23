@@ -1,0 +1,48 @@
+#include <iostream>
+#include <set>
+#include <iterator>
+
+class MedianFinder {
+public:
+    void addNum(int num) {
+        // Добавляем число в multiset
+        nums.insert(num);
+
+        // Если количество элементов стало нечетным, увеличиваем итератор на 1
+        if (nums.size() % 2 != 0) {
+            medianIterator = std::next(nums.begin(), nums.size() / 2);
+        }
+    }
+
+    double findMedian() {
+        // Если количество элементов четное, то медиана - среднее двух средних элементов
+        if (nums.size() % 2 == 0) {
+            auto iter1 = medianIterator;
+            auto iter2 = std::prev(medianIterator);
+            return static_cast<double>(*iter1 + *iter2) / 2.0;
+        } else {
+            // Если количество элементов нечетное, то медиана - средний элемент
+            return static_cast<double>(*medianIterator);
+        }
+    }
+
+private:
+    std::multiset<int> nums;  // Хранение чисел в отсортированном порядке
+    std::multiset<int>::iterator medianIterator;  // Итератор на середину множества
+};
+
+int main() {
+    // Пример использования
+    MedianFinder mf;
+
+    mf.addNum(1);
+    std::cout << mf.findMedian() << std::endl;  // Вывод: 1.0
+
+    mf.addNum(2);
+    std::cout << mf.findMedian() << std::endl;  // Вывод: 1.5
+
+    mf.addNum(3);
+    std::cout << mf.findMedian() << std::endl;  // Вывод: 2.0
+
+    return 0;
+}
